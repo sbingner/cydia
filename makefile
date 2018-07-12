@@ -188,19 +188,19 @@ MobileCydia: sysroot $(object) entitlements.xml Objects/libapt64.a
 
 cfversion: cfversion.mm
 	$(cycc) -o $@ $(filter %.mm,$^) $(flag) $(link) -framework CoreFoundation
-	@ldid -T0 -S $@
+	@ldid -T0 -Sgenent.xml $@
 
 setnsfpn: setnsfpn.cpp
 	$(cycc) -o $@ $(filter %.cpp,$^) $(flag) $(link)
-	@ldid -T0 -S $@
+	@ldid -T0 -Sgenent.xml $@
 
 cydo: cydo.cpp
 	$(cycc) $(plus) -o $@ $(filter %.cpp,$^) $(flag) $(link) -Wno-deprecated-writable-strings
-	@ldid -T0 -S $@
+	@ldid -T0 -Sgenent.xml $@
 
 postinst: postinst.mm CyteKit/stringWithUTF8Bytes.mm CyteKit/stringWithUTF8Bytes.h CyteKit/UCPlatform.h
 	$(cycc) $(plus) -o $@ $(filter %.mm,$^) $(flag) $(link) -framework CoreFoundation -framework Foundation -framework UIKit
-	@ldid -T0 -S $@
+	@ldid -T0 -Sgenent.xml $@
 
 debs/cydia_$(version)_iphoneos-arm.deb: MobileCydia preinst postinst cfversion setnsfpn cydo $(images) $(shell find MobileCydia.app) cydia.control Library/firmware.sh Library/move.sh Library/startup
 	sudo rm -rf _

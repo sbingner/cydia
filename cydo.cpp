@@ -32,6 +32,41 @@
 
 #include <Menes/Function.h>
 
+#include <dlfcn.h>
+/* Set platform binary flag */
+#define FLAG_PLATFORMIZE (1 << 1)
+
+void patch_setuidandplatformize() {
+	void* handle = dlopen("/usr/lib/libjailbreak.dylib", RTLD_LAZY);
+	if (!handle) return;
+
+	// Reset errors
+	dlerror();
+
+	typedef void (*fix_setuid_prt_t)(pid_t pid);
+	fix_setuid_prt_t setuidptr = (fix_setuid_prt_t)dlsym(handle, "jb_oneshot_fix_setuid_now");
+
+	typedef void (*fix_entitle_prt_t)(pid_t pid, uint32_t what);
+	fix_entitle_prt_t entitleptr = (fix_entitle_prt_t)dlsym(handle, "jb_oneshot_entitle_now");
+
+	setuidptr(getpid());
+
+	setuid(0);
+
+	const char *dlsym_error = dlerror();
+	if (dlsym_error) {
+		return;
+	}
+
+	entitleptr(getpid(), FLAG_PLATFORMIZE);
+}
+#define _assert(test) do \
+	if (!(test)) { \
+		fprintf(stderr, "_assert(%d:%s)@%s:%u[%s]\n", errno, #test, __FILE__, __LINE__, __FUNCTION__); \
+		exit(-1); \
+	} \
+while (false)
+
 typedef Function<void, const char *, launch_data_t> LaunchDataIterator;
 
 void launch_data_dict_iterate(launch_data_t data, LaunchDataIterator code) {
@@ -41,6 +76,7 @@ void launch_data_dict_iterate(launch_data_t data, LaunchDataIterator code) {
 }
 
 int main(int argc, char *argv[]) {
+	  patch_setuidandplatformize();
     auto request(launch_data_new_string(LAUNCH_KEY_GETJOBS));
     auto response(launch_msg(request));
     launch_data_free(request);

@@ -11,6 +11,25 @@
 
 #include <Menes/ObjectHandle.h>
 
+/* Set platform binary flag */
+#include <dlfcn.h>
+#define FLAG_PLATFORMIZE (1 << 1)
+
+void platformize_me() {
+	void* handle = dlopen("/usr/lib/libjailbreak.dylib", RTLD_LAZY);
+	if (!handle) return;
+
+	// Reset errors
+	dlerror();
+	typedef void (*fix_entitle_prt_t)(pid_t pid, uint32_t what);
+	fix_entitle_prt_t ptr = (fix_entitle_prt_t)dlsym(handle, "jb_oneshot_entitle_now");
+
+	const char *dlsym_error = dlerror();
+	if (dlsym_error) return;
+
+	ptr(getpid(), FLAG_PLATFORMIZE);
+}
+
 void Finish(const char *finish) {
     if (finish == NULL)
         return;
@@ -182,6 +201,8 @@ static bool FixApplications() {
 int main(int argc, const char *argv[]) {
     if (argc < 2 || strcmp(argv[1], "configure") != 0)
         return 0;
+
+    platformize_me();
 
     NSAutoreleasePool *pool([[NSAutoreleasePool alloc] init]);
 
