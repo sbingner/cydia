@@ -29,32 +29,4 @@
     <key>DTSDKName</key>
     <string>iphoneos2.0.saurik</string>
 
-    <key>FRApplianceDataSourceType</key>
-    <string>All</string>
-
-    <key>FRAppliancePreferedOrderValue</key>
-    <integer>1</integer>
-
-    <key>FRHideIfNoCategories</key>
-    <false/>
-
-    <key>FRRemoteAppliance</key>
-    <true/>
-
-    <key>LSRequiresIPhoneOS</key>
-    <string>1</string>
-
-    <key>MinimumOSVersion</key>
-    <string>3.0</string>
-
-    <key>NSPrincipalClass</key>
-    <string>CydiaAppliance</string>
-
-    <key>UIDeviceFamily</key>
-    <array>
-        <integer>3</integer>
-        <integer>2</integer>
-    </array>
-</dict>
-
-</plist>
+  Cydia.frappliance/English.lproj/InfoPlist.strings branch.
